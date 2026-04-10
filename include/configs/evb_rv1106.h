@@ -9,6 +9,8 @@
 
 #include <configs/rv1106_common.h>
 
+#define CONFIG_SYS_UBOOT_START		CONFIG_SYS_TEXT_BASE
+
 #define CONFIG_SYS_MMC_ENV_DEV 0
 
 #define ROCKCHIP_DEVICE_SETTINGS \
