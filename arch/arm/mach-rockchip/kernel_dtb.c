@@ -356,7 +356,7 @@ dtb_embed:
 	} else
 #endif
 	{
-		printf("Failed to get kernel dtb, ret=%d\n", ret);
+		debug("Failed to get kernel dtb, ret=%d\n", ret);
 		return -ENOENT;
 	}
 

@@ -316,7 +316,7 @@ __weak int rockchip_dnl_key_pressed(void)
 	if (ret)
 		ret = adc_channel_single_shot("adc", channel, &val);
 	if (ret) {
-		printf("%s: Failed to read saradc, ret=%d\n", __func__, ret);
+		debug("%s: Failed to read saradc, ret=%d\n", __func__, ret);
 		return 0;
 	}
 
@@ -496,7 +496,7 @@ static int dtb_scan(void *fdt, int where)
 
 		ret = rockchip_read_resource_dtb(fdt, &hash, &hash_size);
 		if (ret) {
-			printf("Failed to load DTB, ret=%d\n", ret);
+			debug("Failed to load DTB from resource, ret=%d\n", ret);
 			return ret;
 		}
 
@@ -533,7 +533,7 @@ int rockchip_read_dtb_file(void *fdt)
 			break;
 	}
 	if (ret) {
-		printf("No valid DTB, ret=%d\n", ret);
+		debug("No valid DTB, ret=%d\n", ret);
 		return ret;
 	}
 
