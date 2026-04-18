@@ -24,22 +24,7 @@
 		io-channel-names = "buttons";
 		poll-interval = <100>;
 		keyup-threshold-microvolt = <1800000>;
-		u-boot,dm-spl;
-		status = "okay";
-
-		volumeup-key {
-			u-boot,dm-spl;
-			linux,code = <KEY_VOLUMEUP>;
-			label = "volume up";
-			press-threshold-microvolt = <0>;
-		};
-
-		volumedown-key {
-			u-boot,dm-spl;
-			linux,code = <KEY_VOLUMEDOWN>;
-			label = "volume down";
-			press-threshold-microvolt = <400781>;
-		};
+		status = "disabled";
 	};
 
 };
