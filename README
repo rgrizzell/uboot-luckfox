@@ -5,6 +5,14 @@
 # SPDX-License-Identifier:	GPL-2.0+
 #
 
+Luckfox Pico (RV1103 / RV1106):
+===============================
+
+This is a vendor U-Boot 2017.09 fork with fixes for the Luckfox Pico Mini
+A (SD) and Mini B (SPI NAND Thunder-Boot). For the board-specific boot
+chains, partition layouts, and known pitfalls, see
+[LUCKFOX_BOOT.md](LUCKFOX_BOOT.md).
+
 Summary:
 ========
 
