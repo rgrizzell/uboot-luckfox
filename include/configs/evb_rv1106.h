@@ -33,7 +33,12 @@
  * we allow user to boot what they want in U-Boot shell mode.
  */
 #ifdef CONFIG_SPL_KERNEL_BOOT
-#define CONFIG_BOOTCOMMAND "reset"
+/* Vendor assumption: SPL-direct-kernel-boot handles the kernel, so U-Boot
+ * proper should never get here; "reset" restarts the cycle. On the Luckfox
+ * Pico Mini B, the rkbin SPL falls through to U-Boot proper instead, so
+ * "reset" produces a boot loop. Use boot_fit to load the FIT kernel from
+ * the "boot" partition via ENVF mtdparts. */
+#define CONFIG_BOOTCOMMAND "boot_fit"
 #else
 #define CONFIG_BOOTCOMMAND RKIMG_BOOTCOMMAND
 #endif
