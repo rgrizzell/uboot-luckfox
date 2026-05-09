@@ -24,10 +24,15 @@
 		io-channel-names = "buttons";
 		poll-interval = <100>;
 		keyup-threshold-microvolt = <1800000>;
-		/* Download key check for TB/NAND boot is handled by Boot1 blob,
-		 * not U-Boot. Enabling adc-keys here causes false triggers because
-		 * real VDDIO sits below the 1.8V keyup threshold. */
-		status = "disabled";
+		u-boot,dm-pre-reloc;
+		status = "okay";
+
+		volumeup-key {
+			u-boot,dm-pre-reloc;
+			linux,code = <KEY_VOLUMEUP>;
+			label = "volume up";
+			press-threshold-microvolt = <1750>;
+		};
 	};
 
 };

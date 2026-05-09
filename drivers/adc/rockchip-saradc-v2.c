@@ -162,7 +162,7 @@ static int rockchip_saradc_stop(struct udevice *dev)
 static int rockchip_saradc_probe(struct udevice *dev)
 {
 	struct rockchip_saradc_priv *priv = dev_get_priv(dev);
-	struct clk clk;
+	struct clk clk, pclk;
 	int ret;
 
 #if CONFIG_IS_ENABLED(DM_RESET)
@@ -180,6 +180,11 @@ static int rockchip_saradc_probe(struct udevice *dev)
 	ret = clk_set_rate(&clk, priv->data->clk_rate);
 	if (IS_ERR_VALUE(ret))
 		return ret;
+
+	/* Enable APB interface clock so register writes reach the peripheral */
+	ret = clk_get_by_name(dev, "apb_pclk", &pclk);
+	if (!ret)
+		clk_enable(&pclk);
 
 	/* Wait until pll stable */
 	mdelay(5);
