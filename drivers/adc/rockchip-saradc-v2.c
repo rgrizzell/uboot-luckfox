@@ -92,6 +92,21 @@ struct rockchip_saradc_data {
 	int				num_bits;
 	int				num_channels;
 	unsigned long			clk_rate;
+	/*
+	 * Some SoCs (rv1106) have no .enable in their clk_ops, so clk_enable()
+	 * is a no-op and the SARADC bus/sample clocks remain gated after probe.
+	 * Gated registers read as 0, making every ADC result look like 0V and
+	 * falsely triggering download mode via adc-keys.
+	 *
+	 * When pericru_gate_reg is set, probe() directly writes the Rockchip
+	 * write-with-mask value to that address to ungate both clocks before
+	 * any register access.
+	 *
+	 * pericru_gate_reg:  physical address of PERICLKGATE_CON(n)
+	 * pericru_gate_mask: bits to clear (enable); upper 16 are the write mask
+	 */
+	u32				pericru_gate_reg;
+	u32				pericru_gate_mask;
 };
 
 struct rockchip_saradc_priv {
@@ -186,6 +201,17 @@ static int rockchip_saradc_probe(struct udevice *dev)
 	if (!ret)
 		clk_enable(&pclk);
 
+	/*
+	 * rv1106: clk_enable() is a no-op (rv1106_clk_ops has no .enable).
+	 * Directly write the Rockchip write-with-mask value to PERICLKGATE_CON
+	 * to ungate PCLK_SARADC and CLK_SARADC before any register access.
+	 * Without this, all register reads return 0, making every ADC result
+	 * appear as 0V and falsely triggering download mode via adc-keys.
+	 */
+	if (priv->data->pericru_gate_reg)
+		writel(priv->data->pericru_gate_mask << 16,
+		       (void __iomem *)(uintptr_t)priv->data->pericru_gate_reg);
+
 	/* Wait until pll stable */
 	mdelay(5);
 
@@ -238,6 +264,12 @@ static const struct rockchip_saradc_data rk1106_saradc_data = {
 	.num_bits = 10,
 	.num_channels = 2,
 	.clk_rate = 1000000,
+	/*
+	 * CRU(0xff3a0000) + PERICRU_BASE(0x12000) + GATE_BASE(0x800) + CON(3)*4
+	 * Bit 3 = PCLK_SARADC, bit 4 = CLK_SARADC.  Both must be 0 to enable.
+	 */
+	.pericru_gate_reg  = 0xff3b280c,
+	.pericru_gate_mask = 0x18,
 };
 
 static const struct udevice_id rockchip_saradc_ids[] = {
